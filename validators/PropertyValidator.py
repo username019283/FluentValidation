@@ -14,6 +14,4 @@ class PropertyValidator[T,TProperty](IPropertyValidator[T,TProperty]):
     @override
     def get_default_message_template(erro_code:str)->str: return "No default error message has been specified"
 
-    @abstractmethod
-    def is_valid(context:ValidationContext[T],value:TProperty): ...
 
