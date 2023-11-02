@@ -19,22 +19,3 @@ class PropertyValidator(ABC):
 
 
 
-
-class IRegularExpressionValidator(ABC):
-    @property
-    @abstractmethod
-    def pattern(self): ...
-
-
-class RegularExpressionValidator[T](PropertyValidator,IRegularExpressionValidator):
-    _regex_func:Callable[[T],type(re)]
-
-    def __init__(self,pattern:str) -> None:
-        self._pattern:str = pattern
-        self._regex_func = re.compile(pattern)
-
-    @property
-    def pattern(self): return self._pattern
-    @pattern.setter
-    def pattern(self, pattern):
-        self._expression:str = pattern

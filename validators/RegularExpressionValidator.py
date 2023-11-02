@@ -1,4 +1,4 @@
-from abc import ABC
+
 from dataclasses import dataclass
 
 import re
@@ -35,17 +35,15 @@ class RegularExpressionValidator[T](PropertyValidator[T,str],IRegularExpressionV
         self._expression = expression
         self._regex_func = re.compile(expression,options)
 
-    @property
-    def Name(self): return self.__class__.__name__
-
     @override
     def is_valid(self,context: ValidationContext[T], value: str):
         if value is None:
             return True
         
-        regex:re.Pattern= self._regex_func(context.instance_to_validate)
+        # regex:re.Pattern= self._regex_func(context.instance_to_validate)
 
-        if not regex.match(value):
+        if not self._regex_func.match(value):
+            context.MessageFormatter.AppendArgument(self.Name,str(self._regex_func))
             return False
         return True 
     

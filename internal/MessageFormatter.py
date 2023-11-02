@@ -1,7 +1,7 @@
 import re
 
 class MessageFormatter():
-	_placeholderValues = dict[str,object]
+	_placeholderValues:dict[str,object] = {}
 	_keyRegex:re.Pattern = re.compile("{([^{}:]+)(?::([^{}]+))?}")
 	PropertyName = "PropertyName"
 	PropertyValue = "PropertyValue"
@@ -20,7 +20,7 @@ class MessageFormatter():
 	
 
 	def BuildMessage(self, messageTemplate:str)->str:
-		return "Mensaje de error que no se como se implementa"
+		return messageTemplate
 	# 	return self._keyRegex.sub(messageTemplate, m =>	{
 	# 		var key = m.Groups[1].Value;
 

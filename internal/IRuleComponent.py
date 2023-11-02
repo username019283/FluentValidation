@@ -9,7 +9,7 @@ class IRuleComponent(ABC):
 
     @property
     @abstractmethod
-    def ErroCode(self)->str: ...
+    def ErrorCode(self)->str: ...
 
 
     @property
