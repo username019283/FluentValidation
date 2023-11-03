@@ -154,11 +154,11 @@ class AbstractValidator[T](ABC):
         #result.RuleSetExecuted = RulesetValidatorSelector.DefaultRuleSetNameInArray
 
 
-# class RegexPattern(Enum):
-#     Email = "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$"
-#     PhoneNumber = "^\d{9}$"
-#     PostalCode = "^\d{5}$"
-#     Dni = "^[0-9]{8}[A-Z]$"
+class RegexPattern():
+    Email = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$"
+    PhoneNumber = r"^\d{9}$"
+    PostalCode = r"^\d{5}$"
+    Dni = r"^[0-9]{8}[A-Z]$"
 
 
 
@@ -178,14 +178,15 @@ if __name__ == "__main__":
     class PersonValidator(AbstractValidator[Person]):
         def __init__(self) -> None:
             super().__init__()
-            self.RuleFor(lambda x: x.dni).NotNull().Matches("asdf").ExactLength(10).Length(5,15).WithMessage("error en varios condicionales que hemos creado")
-            self.RuleFor(lambda x:x.email).NotNull().Matches(".+@.+\.(es|com)").WithMessage("El correo introducido no cumple con lo que deberia")
+            self.RuleFor(lambda x: x.dni).NotNull().Matches(RegexPattern.PhoneNumber).ExactLength(8).WithMessage("no tiene los caracteres exactos").Length(15,20).WithMessage("error personalizado de longitud")
+            self.RuleFor(lambda x:x.email).NotNull().MaxLength(5).Matches(RegexPattern.Email).WithMessage("El correo introducido no cumple con la regex especifica").MaxLength(5).WithMessage("El correo excede los 5 caracteres")
 
 
-    person = Person(name="Pablo",dni="51527736P",email=None)
+    person = Person(name="Pablo",dni="51527736P",email="pablogmail.org")
 
     validator = PersonValidator()
     result = validator.validate(person)
+    result.errors.count()
     if not result.is_valid:
         for error in result.errors:
-            print(error.AttemptedValue,error.ErrorMessage)
+            print(f"Error en {error.PropertyName} con mensaje {error.ErrorMessage}")
