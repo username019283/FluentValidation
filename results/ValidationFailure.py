@@ -9,8 +9,8 @@ class ValidationFailure:
         ):
         
 
-        self._PropertyName:str = PropertyName,
-        self._ErrorMessage:str = ErrorMessage,
+        self._PropertyName:str = PropertyName
+        self._ErrorMessage:str = ErrorMessage
         self._AttemptedValue:object = AttemptedValue
 
         self._CustomState:object = None
