@@ -20,6 +20,39 @@ class IValidationContext(ABC):
     def ThrowOnFailures(self)->bool: ...
 
     
+    # @property
+    # @abstractmethod
+    # def InstanceToValidate(self)->object: ...
+    
+    # @property
+    # @abstractmethod
+    # def RootContextData(self)->dict[str, object]: ...
+    
+    # @property
+    # @abstractmethod
+    # def Selector(self)->IValidatorSelector: ...
+    
+    # @property
+    # @abstractmethod
+    # def IsChildContext(self)->bool: ...
+    
+    # @property
+    # @abstractmethod
+    # def IsChildCollectionContext(self)->bool: ...
+    
+    # @property
+    # @abstractmethod
+    # def ParentContext(self)->IValidationContext: ...
+    
+    # @property
+    # @abstractmethod
+    # def IsAsync(self)->bool: ...
+    
+    @property
+    @abstractmethod
+    def ThrowOnFailures(self)->bool: ...
+
+
 
 
 class IHasFailures(ABC):
@@ -39,8 +72,8 @@ class ValidationContext[T](IValidationContext,IHasFailures):
         self._instance_to_validate = instance_to_validate
         self._failures:list[ValidationFailure] = failures
         self._messageFormatter: MessageFormatter = MessageFormatter()
-        self._property_path = None        
-        self._displayNameFunc = None        
+        self._property_path:str = None        
+        self._displayNameFunc:str = None        
 
     @property
     def instance_to_validate(self)->object: return self._instance_to_validate
