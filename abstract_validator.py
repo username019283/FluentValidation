@@ -174,11 +174,14 @@ if __name__ == "__main__":
     class PersonValidator(AbstractValidator[Person]):
         def __init__(self) -> None:
             super().__init__()
-            self.RuleFor(lambda x: x.dni).NotNull().Matches("asdf").ExactLength(10).Length(5,15)
+            self.RuleFor(lambda x: x.dni).NotNull().Matches("asdf").ExactLength(10).Length(5,15).WithMessage("error en varios condicionales que hemos creado")
+            self.RuleFor(lambda x:x.email).NotNull().Matches(".+@.+\.(es|com)").WithMessage("El correo introducido no cumple con lo que deberia")
 
 
-    person = Person(name="Pablo",dni="51527736P",email="p.hzamora@alumnos.upm.es")
+    person = Person(name="Pablo",dni="51527736P",email=None)
 
     validator = PersonValidator()
     result = validator.validate(person)
-    result.is_valid
+    if not result.is_valid:
+        for error in result.errors:
+            print(error.AttemptedValue,error.ErrorMessage)
