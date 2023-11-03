@@ -1,10 +1,9 @@
 from typing import Callable, override
 from abc import ABC, abstractmethod
 from IValidationContext import ValidationContext
-from validators.IpropertyValidator import IPropertyValidator
 from validators.PropertyValidator import PropertyValidator
 
-class ILengthValidator(IPropertyValidator):
+class ILengthValidator():
     @abstractmethod
     def Min(self)-> int:...
 
