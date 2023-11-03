@@ -10,10 +10,10 @@ class RuleComponent[T,TProperty](IRuleComponent):
         self._error_message = None
 
     def __repr__(self) -> str:
-        return f"<RuleComponent validator: {self._property_validator.__class__.__name__}>"
+        return f"<RuleComponent validator: {self.ErrorCode}>"
 
     @property
-    def ErrorCode(self)->str: return self._error_message
+    def ErrorCode(self)->str: return self._property_validator.__class__.__name__
     
     @property
     def Validator(self)-> IPropertyValidator: return self._property_validator # falta implementar => (IPropertyValidator) _propertyValidator ?? _asyncPropertyValidator;
