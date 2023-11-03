@@ -22,6 +22,8 @@ class RegularExpressionValidator[T](PropertyValidator[T,str],IRegularExpressionV
             self.__init__exp_re_pattern(expression)
         elif isinstance(expression,re.Pattern) and options is None:
             self.__init__exp_re_pattern_options(expression,options)
+        else:
+            raise Exception("No se ha inicializado la variable correctamente")
 
 
     def __init__exp_str(self,expression:str):
@@ -49,4 +51,4 @@ class RegularExpressionValidator[T](PropertyValidator[T,str],IRegularExpressionV
     
     @override
     def get_default_message_template(self, error_code:str):
-        return f"RegularExpreesion {self.Name} failed"
+        return f"{self.Name} failed"
