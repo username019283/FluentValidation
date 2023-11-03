@@ -71,7 +71,7 @@ class RuleBase[T,TProperty,TValue](IValidationRule[T,TValue]):
         else:
             error = component.GetErrorMessage(context,value)
 
-        failure = ValidationFailure(context.PropertyPath, error, value)
+        failure = ValidationFailure(context.PropertyPath, error, value,component.ErrorCode)
 
         # failure.FormattedMessagePlaceholderValues = context.MessageFormatter.PlaceholderValues
         failure._ErrorCode = component.ErrorCode # ?? ValidatorOptions.Global.ErrorCodeResolver(component.Validator);
@@ -186,7 +186,6 @@ if __name__ == "__main__":
 
     validator = PersonValidator()
     result = validator.validate(person)
-    result.errors.count()
     if not result.is_valid:
         for error in result.errors:
             print(f"Error en {error.PropertyName} con mensaje {error.ErrorMessage}")

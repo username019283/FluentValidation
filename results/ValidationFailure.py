@@ -5,6 +5,7 @@ class ValidationFailure:
         ,PropertyName:str = None
         ,ErrorMessage:str = None
         ,AttemptedValue:object = None
+        ,ErrorCode:str = None
         ):
         
 
@@ -13,7 +14,7 @@ class ValidationFailure:
         self._AttemptedValue:object = AttemptedValue
 
         self._CustomState:object = None
-        self._ErrorCode:str = None
+        self._ErrorCode:str = ErrorCode
         self._FormattedMessagePlaceholderValues:dict[str,object] = None
 
     @property
