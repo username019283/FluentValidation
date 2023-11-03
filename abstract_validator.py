@@ -4,6 +4,7 @@ import dis
 
 
 from dataclasses import dataclass
+from IValidationRule import IValidationRule
 from internal.MessageBuilderContext import MessageBuilderContext
 from internal.RuleComponent import RuleComponent
 from results.ValidationFailure import ValidationFailure
@@ -36,7 +37,7 @@ class RuleBase[T,TProperty,TValue](IValidationRule[T,TValue]):
         self._displayName:str = self._propertyName
 
     @property
-    def PropertyFunc(self): return self._PropertyFunc
+    def PropertyFunc(self)->Callable[[T],TProperty]: return self._PropertyFunc
     @property
     def TypeToValidate(self): return self._type_to_validate
 
@@ -70,7 +71,7 @@ class RuleBase[T,TProperty,TValue](IValidationRule[T,TValue]):
         else:
             error = component.GetErrorMessage(context,value)
 
-        failure = ValidationFailure("context.PropertyPath por que no esta implmementado", error, value)
+        failure = ValidationFailure(context.PropertyPath, error, value)
 
         # failure.FormattedMessagePlaceholderValues = context.MessageFormatter.PlaceholderValues
         failure._ErrorCode = component.ErrorCode # ?? ValidatorOptions.Global.ErrorCodeResolver(component.Validator);
@@ -104,7 +105,6 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
                 first = False
                 propValue= self.PropertyFunc(context.instance_to_validate)
 
-            # context.InitializeForPropertyValidator(context._PropertyName)
             valid:bool = component.ValidateAsync(context,propValue)
             if not valid:
                 # super().PrepareMessageFormatterForValidationError(context,propValue)
@@ -113,17 +113,20 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
         return
     
 
-class RuleBuilder[T,TProperty](IRuleBuilder): # no implemento IRuleBuilderOptions por que el metodo no se que hace
+class RuleBuilder[T,TProperty](IRuleBuilder,IRuleBuilderInternal): # no implemento IRuleBuilderOptions por que el metodo no se que hace
 
     def __init__(self,rule:IValidationRuleInternal[T,TProperty], parent:TAbstractValidator):
-        self.rule = rule
+        self._rule = rule
         self.parent_validator = parent
 
+    @override
     def SetValidator(self,validator:IPropertyValidator[T,TProperty])->IRuleBuilder[T,TProperty]: # -> IRuleBuilderOptions[T,TProperty]
-        self.rule.AddValidator(validator)
+        self.Rule.AddValidator(validator)
         return self
     
-
+    @property
+    def Rule(self) -> IValidationRule[T, TProperty]:
+        return self._rule
         
 
 class AbstractValidator[T](ABC):
@@ -135,11 +138,11 @@ class AbstractValidator[T](ABC):
 
 
     def internal_validate(self, context:ValidationContext)->ValidationResult:
-        result:ValidationResult = ValidationResult(None,context.Failures)
         for rule in self._rules:
             rule.ValidateAsync(context)
-
-        self.SetExecutedRuleSets(result,context)
+ 
+        result:ValidationResult = ValidationResult(None,context.Failures)
+        # self.SetExecutedRuleSets(result,context)
         return result
 
     def RuleFor[TProperty](self,func:Callable[[T],TProperty])->IRuleBuilder[T,TProperty]: #IRuleBuilderInitial[T,TProperty]:
@@ -147,8 +150,8 @@ class AbstractValidator[T](ABC):
         self._rules.append(rule)
         return RuleBuilder(rule,self)
 
-    def SetExecutedRuleSets(result:ValidationResult, context:ValidationContext[T]):...
-        # result.RuleSetExecuted = RulesetValidatorSelector.DefaultRuleSetNameInArray
+    def SetExecutedRuleSets(self, result:ValidationResult, context:ValidationContext[T]):...
+        #result.RuleSetExecuted = RulesetValidatorSelector.DefaultRuleSetNameInArray
 
 
 # class RegexPattern(Enum):
