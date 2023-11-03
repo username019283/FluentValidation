@@ -54,6 +54,10 @@ class ValidationContext[T](IValidationContext,IHasFailures):
     @property
     def MessageFormatter(self)->MessageFormatter: return self._messageFormatter
 
-    def InitializeForPropertyValidator(self, propertyPath:str, displayNameFunc:Callable[[Self],str]):
+    @property
+    def PropertyPath(self)->str: return self._property_path
+
+    # def InitializeForPropertyValidator(self, propertyPath:str, displayNameFunc:Callable[[Self],str]):
+    def InitializeForPropertyValidator(self, propertyPath:str):
         self._property_path = propertyPath
-        self._displayNameFunc = displayNameFunc
+        # self._displayNameFunc = displayNameFunc

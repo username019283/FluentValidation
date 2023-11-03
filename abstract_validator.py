@@ -97,6 +97,7 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
 
     def ValidateAsync(self, context:ValidationContext[T]):
         first = True
+        context.InitializeForPropertyValidator(self.PropertyName)
         for component in self.Components:
             context.MessageFormatter.Reset()
             if first:
