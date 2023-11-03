@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
 from typing import Self, TypeVar
+from IValidationRule import IValidationRule
 
 from validators.IpropertyValidator import IPropertyValidator
 from validators.LengthValidator import *
@@ -15,6 +16,9 @@ class DefaultValidatorExtensions:
 	"""
 	ruleBuilder actua como self, ya que es la instancia padre que se le pasa a traves de la herencia
 	"""
+	def configurable[T,TProperty](ruleBuilder:TIRuleBuilder)->IValidationRule[T,TProperty]:
+		return ruleBuilder.Rule
+	
 	def NotNull[T, TProperty](ruleBuilder:TIRuleBuilder)->TIRuleBuilder:
 		return ruleBuilder.SetValidator(NotNullValidator[T,TProperty]())
 
@@ -33,14 +37,20 @@ class DefaultValidatorExtensions:
 	def MinLength[T](ruleBuilder:TIRuleBuilder, MinLength:int)->TIRuleBuilder:
 		return ruleBuilder.SetValidator(MinimumLengthValidator[T](MinLength))
 
+	def WithMessage(ruleBuilder:TIRuleBuilder,errorMessage:str)->TIRuleBuilder:
+		DefaultValidatorExtensions.configurable(ruleBuilder).Current.set_error_message(errorMessage)
+		return ruleBuilder
 
 
 
 
+class IRuleBuilderInternal[T,TProperty](ABC):
+	@property
+	@abstractmethod
+	def Rule(self)-> IValidationRule[T,TProperty]: ...
 
 
-
-class IRuleBuilder[T, TProperty] (ABC, DefaultValidatorExtensions): 
+class IRuleBuilder[T, TProperty] (IRuleBuilderInternal, DefaultValidatorExtensions): 
     @abstractmethod
     def SetValidator(validator: IPropertyValidator[T, TProperty])->Self: ...
 
