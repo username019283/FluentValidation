@@ -49,6 +49,3 @@ class RegularExpressionValidator[T](PropertyValidator[T,str],IRegularExpressionV
             return False
         return True 
     
-    @override
-    def get_default_message_template(self, error_code:str):
-        return f"{self.Name} failed"

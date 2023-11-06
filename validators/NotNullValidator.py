@@ -8,6 +8,3 @@ class NotNullValidator[T,TProperty](PropertyValidator):
     def is_valid(self, _: ValidationContext, value: TProperty) -> bool:
         return value is not None
     
-    @override
-    def get_default_message_template(self, error_code: str) -> str:
-        return f"{self.__class__.__name__} failed" 
