@@ -3,10 +3,12 @@ from abc import ABC, abstractmethod
 from IValidationContext import ValidationContext
 from validators.PropertyValidator import PropertyValidator
 
-class ILengthValidator():
+class ILengthValidator(ABC):
+    @property 
     @abstractmethod
     def Min(self)-> int:...
 
+    @property 
     @abstractmethod
     def Max(self)-> int:...
 
@@ -14,10 +16,11 @@ class ILengthValidator():
 
 class LengthValidator[T](PropertyValidator[T,str], ILengthValidator):
     def __init__(self,min:int|Callable[[T],int],max:int|Callable[[T],int]):
-        self._min = None
-        self._max = None
-        self._min_func = None
-        self._max_func = None
+        self._min:int = None
+        self._max:int = None
+        self._min_func:Callable[[T],int] = None
+        self._max_func:Callable[[T],int] = None
+
         if isinstance(min,int) and (isinstance(max,int)):
             self.__init__int(min,max)
         else:
@@ -29,7 +32,7 @@ class LengthValidator[T](PropertyValidator[T,str], ILengthValidator):
         self._max:int = max
 
         if max !=-1 and max <min:
-            raise Exception("Max should be larger than min.")
+            raise Exception(f"({max}) Max should be larger than min ({min})")
 
     def __init__functions(self, min:Callable[[T],int],max:Callable[[T],int]):
         self._min_func = min
@@ -61,10 +64,7 @@ class LengthValidator[T](PropertyValidator[T,str], ILengthValidator):
             context.MessageFormatter.AppendArgument("TotalLength",length)
             return False
         return True
-            
-    @override
-    def get_default_message_template(self, error_code: str) -> str:
-        return f"Error on {self.__class__.__name__}"
+
     
 
 
@@ -73,26 +73,14 @@ class ExactLengthValidator[T](LengthValidator[T]):
     def __init__(self, length: int | Callable[[T], int]):
         super().__init__(length,length)
 
-    @override
-    def get_default_message_template(self, error_code: str) -> str:
-        return f"Error on {self.__class__.__name__}"
-
 
 
 class MaximumLengthValidator[T](LengthValidator[T]):
     def __init__(self, length: int | Callable[[T], int]):
         super().__init__(0, length)
 
-    @override
-    def get_default_message_template(self, error_code: str) -> str:
-        return f"Error on {self.__class__.__name__}"
-
 
 
 class MinimumLengthValidator[T](LengthValidator[T]):
     def __init__(self, length: int | Callable[[T], int]):
         super().__init__(length,-1)
-
-    @override
-    def get_default_message_template(self, error_code: str) -> str:
-        return f"Error on {self.__class__.__name__}"
