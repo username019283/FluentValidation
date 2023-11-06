@@ -85,7 +85,7 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
         super().__init__(func,type_to_validate)
 
     @classmethod
-    def create(cls, func:Callable[[T],TProperty]):
+    def create(cls, func:Callable[[T],TProperty])->Self:
         return PropertyRule(func,type(TProperty))
 
     def AddValidator(self,validator:IPropertyValidator[T,TProperty])->None:
@@ -96,7 +96,7 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
     def GetDisplayName(): ...
 
 
-    def ValidateAsync(self, context:ValidationContext[T]):
+    def ValidateAsync(self, context:ValidationContext[T])-> None:
         first = True
         context.InitializeForPropertyValidator(self.PropertyName)
         for component in self.Components:
@@ -110,7 +110,7 @@ class PropertyRule[T,TProperty](RuleBase[T,TProperty,TProperty]):
                 # super().PrepareMessageFormatterForValidationError(context,propValue)
                 failure = self.CreateValidationError(context,propValue,component)
                 context.Failures.append(failure)
-        return
+        return None
     
 
 class RuleBuilder[T,TProperty](IRuleBuilder,IRuleBuilderInternal): # no implemento IRuleBuilderOptions por que el metodo no se que hace
@@ -119,7 +119,6 @@ class RuleBuilder[T,TProperty](IRuleBuilder,IRuleBuilderInternal): # no implemen
         self._rule = rule
         self.parent_validator = parent
 
-    @override
     def SetValidator(self,validator:IPropertyValidator[T,TProperty])->IRuleBuilder[T,TProperty]: # -> IRuleBuilderOptions[T,TProperty]
         self.Rule.AddValidator(validator)
         return self
