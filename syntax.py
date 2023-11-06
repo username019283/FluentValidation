@@ -1,15 +1,16 @@
 from abc import abstractmethod, ABC
-from typing import Self, TypeVar
+from typing import Any, Self, TypeVar
 from IValidationRule import IValidationRule
 
 from validators.IpropertyValidator import IPropertyValidator
 from validators.LengthValidator import *
+from validators.NotNullValidator import NotNullValidator
+from validators.RegularExpressionValidator import RegularExpressionValidator
+from validators.IsInstance import IsInstance
 
 TIRuleBuilder = TypeVar("TIRuleBuilder",bound="IRuleBuilder")
 
 
-from validators.NotNullValidator import NotNullValidator
-from validators.RegularExpressionValidator import RegularExpressionValidator
 
 
 class DefaultValidatorExtensions:
@@ -37,6 +38,9 @@ class DefaultValidatorExtensions:
 	def MinLength[T](ruleBuilder:TIRuleBuilder, MinLength:int)->TIRuleBuilder:
 		return ruleBuilder.SetValidator(MinimumLengthValidator[T](MinLength))
 
+	def IsInstance[T](ruleBuilder:TIRuleBuilder, instance:Any)->TIRuleBuilder:
+		return ruleBuilder.SetValidator(IsInstance(instance))
+
 	def WithMessage(ruleBuilder:TIRuleBuilder,errorMessage:str)->TIRuleBuilder:
 		DefaultValidatorExtensions.configurable(ruleBuilder).Current.set_error_message(errorMessage)
 		return ruleBuilder
@@ -50,9 +54,10 @@ class IRuleBuilderInternal[T,TProperty](ABC):
 	def Rule(self)-> IValidationRule[T,TProperty]: ...
 
 
-class IRuleBuilder[T, TProperty] (IRuleBuilderInternal, DefaultValidatorExtensions): 
-    @abstractmethod
-    def SetValidator(validator: IPropertyValidator[T, TProperty])->Self: ...
+class IRuleBuilder[T, TProperty] (IRuleBuilderInternal, DefaultValidatorExtensions):
+	@staticmethod
+	@abstractmethod
+	def SetValidator(validator: IPropertyValidator[T, TProperty])->Self: ...
 
 
 
