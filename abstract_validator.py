@@ -177,8 +177,9 @@ if __name__ == "__main__":
     class PersonValidator(AbstractValidator[Person]):
         def __init__(self) -> None:
             super().__init__()
-            self.RuleFor(lambda x: x.dni).NotNull().Matches(RegexPattern.PhoneNumber).ExactLength(8).WithMessage("no tiene los caracteres exactos").Length(15,20).WithMessage("error personalizado de longitud")
+            self.RuleFor(lambda x: x.dni).IsInstance(float).WithMessage("mensaje personalizado de is_instance").Matches(RegexPattern.PhoneNumber).Length(10,50).WithMessage("no tiene los caracteres exactos").Length(15,20).WithMessage("error personalizado de longitud")
             self.RuleFor(lambda x:x.email).NotNull().MaxLength(5).Matches(RegexPattern.Email).WithMessage("El correo introducido no cumple con la regex especifica").MaxLength(5).WithMessage("El correo excede los 5 caracteres")
+            pass
 
 
     person = Person(name="Pablo",dni="51527736P",email="pablogmail.org")
@@ -187,4 +188,4 @@ if __name__ == "__main__":
     result = validator.validate(person)
     if not result.is_valid:
         for error in result.errors:
-            print(f"Error en {error.PropertyName} con mensaje {error.ErrorMessage}")
+            print(f"Error en {error.PropertyName} con mensaje:\t{error.ErrorMessage}")
